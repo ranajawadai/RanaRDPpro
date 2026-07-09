@@ -65,7 +65,7 @@ RUN mkdir -p /root/.vnc /home/rana/.vnc \
 # ---- 8. xrdp config + session ------------------------------------------
 COPY xrdp.ini /etc/xrdp/xrdp.ini
 
-# Fix /etc/xrdp/startwm.sh — this is what xrdp actually calls to start the desktop
+# Fix /etc/xrdp/startwm.sh — xrdp calls this to start the desktop session
 RUN cat > /etc/xrdp/startwm.sh << 'WMEOF'
 #!/bin/bash
 unset SESSION_MANAGER
@@ -75,10 +75,16 @@ exec startxfce4
 WMEOF
 chmod +x /etc/xrdp/startwm.sh
 
-# .xsession fallback for legacy paths
-RUN printf 'startxfce4\n' > /home/rana/.xsession \
+# .xsession for xrdp and create user session dir
+RUN mkdir -p /home/rana/.config/xfce4 \
+    && printf 'startxfce4\n' > /home/rana/.xsession \
     && chmod +x /home/rana/.xsession \
-    && chown rana:rana /home/rana/.xsession
+    && chown -R rana:rana /home/rana
+
+# Set default xsession system-wide
+RUN mkdir -p /etc/X11/Xsession.d \
+    && printf '#!/bin/sh\nexec startxfce4\n' > /etc/X11/Xsession.d/99xfce \
+    && chmod +x /etc/X11/Xsession.d/99xfce
 
 # Fix container-specific PAM issue (causes 0xd06 if not done)
 RUN sed -i 's/^\(session\s*required\s*pam_loginuid.so\)/# \1/' /etc/pam.d/xrdp-sesman 2>/dev/null \
