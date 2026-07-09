@@ -13,6 +13,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
 
 # ---- 1. System + desktop + remote access --------------------------------
 # Packages: core, desktop, remote access (RDP+VNC/noVNC), dev, browser, golang
+# NOTE: nodejs/npm intentionally omitted here — NodeSource provides Node 22+npm.
 RUN apt-get update && apt-get install -y --no-install-recommends \
         ca-certificates curl wget gnupg git unzip xz-utils sudo nano vim \
         xfce4 xfce4-goodies dbus-x11 x11-utils x11-xserver-utils \
