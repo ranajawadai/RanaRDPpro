@@ -9,7 +9,7 @@ FROM kalilinux/kali-rolling
 ENV DEBIAN_FRONTEND=noninteractive \
     LANG=C.UTF-8 \
     LC_ALL=C.UTF-8 \
-    PASSWORD=kali
+    PASSWORD=rana
 
 # ---- 1. System + desktop + remote access --------------------------------
 # Packages: core, desktop, remote access (RDP+VNC/noVNC), dev, browser, golang
@@ -41,39 +41,39 @@ RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master
     || true
 
 # ---- 6. User + passwords ----------------------------------------------
-RUN id kali >/dev/null 2>&1 || useradd -m -s /bin/zsh kali \
-    && echo "kali:kali" | chpasswd \
-    && echo "root:kali" | chpasswd \
-    && usermod -aG sudo kali \
+RUN id rana >/dev/null 2>&1 || useradd -m -s /bin/zsh rana \
+    && echo "rana:rana" | chpasswd \
+    && echo "root:rana" | chpasswd \
+    && usermod -aG sudo rana \
     && sed -i 's/^#\?PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config 2>/dev/null || true
 
 # ---- 7. VNC / XFCE session for noVNC ----------------------------------
-RUN mkdir -p /root/.vnc /home/kali/.vnc \
+RUN mkdir -p /root/.vnc /home/rana/.vnc \
     && printf '#!/bin/sh\nunset SESSION_MANAGER\nunset DBUS_SESSION_BUS_ADDRESS\nexec startxfce4\n' \
        > /root/.vnc/xstartup \
     && chmod +x /root/.vnc/xstartup \
-    && cp /root/.vnc/xstartup /home/kali/.vnc/xstartup \
-    && chown -R kali:kali /home/kali/.vnc
+    && cp /root/.vnc/xstartup /home/rana/.vnc/xstartup \
+    && chown -R rana:rana /home/rana/.vnc
 
 # ---- 8. xrdp config overlay -------------------------------------------
 COPY xrdp.ini /etc/xrdp/xrdp.ini
 RUN printf 'startxfce4\n' > /etc/skel/.xsession \
-    && cp /etc/skel/.xsession /home/kali/.xsession \
-    && chown kali:kali /home/kali/.xsession
+    && cp /etc/skel/.xsession /home/rana/.xsession \
+    && chown rana:rana /home/rana/.xsession
 
 # ---- 9. OpenCode config + AGENTS.md -----------------------------------
 COPY config/opencode/config.toml /root/.config/opencode/config.toml
 COPY config/opencode/AGENTS.md /root/.config/opencode/AGENTS.md
-RUN mkdir -p /home/kali/.config/opencode \
-    && cp /root/.config/opencode/config.toml /home/kali/.config/opencode/config.toml \
-    && cp /root/.config/opencode/AGENTS.md /home/kali/.config/opencode/AGENTS.md \
-    && chown -R kali:kali /home/kali/.config
+RUN mkdir -p /home/rana/.config/opencode \
+    && cp /root/.config/opencode/config.toml /home/rana/.config/opencode/config.toml \
+    && cp /root/.config/opencode/AGENTS.md /home/rana/.config/opencode/AGENTS.md \
+    && chown -R rana:rana /home/rana/.config
 
 # ---- 10. OpenCode custom command (bosk) -------------------------------
 COPY .opencode/command/bosk.md /root/.opencode/command/bosk.md
-RUN mkdir -p /home/kali/.opencode/command \
-    && cp /root/.opencode/command/bosk.md /home/kali/.opencode/command/bosk.md \
-    && chown -R kali:kali /home/kali/.opencode
+RUN mkdir -p /home/rana/.opencode/command \
+    && cp /root/.opencode/command/bosk.md /home/rana/.opencode/command/bosk.md \
+    && chown -R rana:rana /home/rana/.opencode
 
 # ---- 11. Scripts + entrypoint -----------------------------------------
 COPY scripts/ /opt/scripts/

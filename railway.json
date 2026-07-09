@@ -16,7 +16,7 @@
     "default": {
       "variables": {
         "PORT": "8080",
-        "RDP_PASSWORD": "kali"
+        "RDP_PASSWORD": "rana"
       }
     }
   }

@@ -37,14 +37,14 @@ the Kali toolchain. Ships a curated recon/offsec toolset and an auto-installer w
 2. Railway → **New Project** → **Deploy from GitHub** → select the repo.
 3. Railway auto-detects the `Dockerfile`, builds (≈15–25 min), and gives you a public URL.
 4. Open the URL → noVNC desktop loads. For RDP, expose TCP `3389` in Railway and connect
-   with an RDP client (user `kali`, password from `RDP_PASSWORD`, default `kali`).
+   with an RDP client (user `rana`, password from `RDP_PASSWORD`, default `rana`).
 
 ### Required Railway variables
 
 | Variable        | Default | Notes                                   |
 | --------------- | ------- | --------------------------------------- |
 | `PORT`          | `8080`  | noVNC web port (set automatically).      |
-| `RDP_PASSWORD`  | `kali`  | Password for the `kali` user (change!). |
+| `RDP_PASSWORD`  | `rana`  | Password for the `rana` user (change!). |
 | `OPENAI_API_KEY` / `ANTHROPIC_API_KEY` | – | For OpenCode (provider of your choice). |
 
 > ⚠️ Railway free RAM is small; XFCE + a browser wants **>1 GB**. Use a paid plan or it may OOM.
@@ -58,10 +58,10 @@ docker build -t ranardp-pro .
 docker run -d --name ranardp \
   -p 8080:8080 -p 3389:3389 \
   -e RDP_PASSWORD='yourStrongPass' \
-  -v ranardp-home:/home/kali \
+  -v ranardp-home:/home/rana \
   ranardp-pro
 ```
-Open `http://<host>:8080`. RDP → `host:3389` (user `kali`).
+Open `http://<host>:8080`. RDP → `host:3389` (user `rana`).
 
 ---
 

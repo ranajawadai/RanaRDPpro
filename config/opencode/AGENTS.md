@@ -5,7 +5,7 @@ desktop accessible via RDP (port 3389) and a browser (noVNC on $PORT).
 
 ## Environment facts
 - OS: Kali Linux (rolling). Every Kali/Debian security binary is on `PATH`.
-- User: `kali` (home `/home/kali`). You may also use `root`.
+- User: `rana` (home `/home/rana`). You may also use `root`.
 - Dev tooling present: `python3`, `pip`/`pipx`, `node` (v22), `npm`, `git`, `zsh`+Oh My Zsh, `tmux`.
 - Browsers: `chromium` (and best-effort `brave-browser`).
 - Preinstalled recon/offsec tools: `nmap`, `sqlmap`, `gobuster`, `ffuf`, `nuclei`,
@@ -24,4 +24,4 @@ desktop accessible via RDP (port 3389) and a browser (noVNC on $PORT).
 ## Rules
 - Only target systems the user is **authorized** to test.
 - Keep the desktop responsive; avoid unbounded memory use.
-- Persist useful notes/scripts under `/home/kali` (or a mounted volume).
+- Persist useful notes/scripts under `/home/rana` (or a mounted volume).

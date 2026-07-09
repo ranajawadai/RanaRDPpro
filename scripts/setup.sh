@@ -4,8 +4,8 @@ set -euo pipefail
 
 echo "==> RanaRDP-Pro setup"
 # Ensure user exists
-id kali >/dev/null 2>&1 || useradd -m -s /bin/zsh kali
-echo "kali:${RDP_PASSWORD:-kali}" | chpasswd 2>/dev/null || true
+id rana >/dev/null 2>&1 || useradd -m -s /bin/zsh rana
+echo "rana:${RDP_PASSWORD:-rana}" | chpasswd 2>/dev/null || true
 
 # Symlink Go tools into PATH if present
 if [ -d /opt/gobin ]; then
@@ -15,7 +15,7 @@ fi
 # Make OpenCode available to the kali user's shell
 ln -sf "$(command -v opencode)" /usr/local/bin/opencode 2>/dev/null || true
 
-# zsh default for kali
-chsh -s /bin/zsh kali 2>/dev/null || true
+# zsh default for rana
+chsh -s /bin/zsh rana 2>/dev/null || true
 
-echo "==> setup done. User: kali | RDP:3389 | Web(noVNC): \$PORT"
+echo "==> setup done. User: rana | RDP:3389 | Web(noVNC): \$PORT"
