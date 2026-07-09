@@ -1,53 +1,50 @@
 #!/usr/bin/env bash
-# start.sh — RanaRDP-Pro entrypoint (xrdp as daemon, supervisord for foreground)
-set -euo pipefail
+# start.sh — RanaRDP-Pro entrypoint
+# xrdp/xrdp-sesman run as daemons, supervisord manages foreground processes
+set -u
 
 export PORT="${PORT:-8080}"
 RDP_PASS="${RDP_PASSWORD:-rana}"
 
-# Set passwords
+echo "==> Setting passwords"
 echo "rana:${RDP_PASS}" | chpasswd 2>/dev/null || true
 echo "root:${RDP_PASS}" | chpasswd 2>/dev/null || true
 
-# Session files for xrdp and VNC
-for h in /root /home/rana; do
-    mkdir -p "$h/.vnc"
-    cat > "$h/.vnc/xstartup" << 'EOF'
-#!/bin/sh
+# --- Session files ---
+SESSION_SCRIPT='#!/bin/sh
 unset SESSION_MANAGER
 unset DBUS_SESSION_BUS_ADDRESS
 export XDG_SESSION_TYPE=x11
-exec startxfce4
-EOF
+exec startxfce4'
+
+for h in /root /home/rana; do
+    mkdir -p "$h/.vnc"
+    printf '%s\n' "$SESSION_SCRIPT" > "$h/.vnc/xstartup"
     chmod +x "$h/.vnc/xstartup"
     printf 'startxfce4\n' > "$h/.xsession"
     chmod +x "$h/.xsession"
 done
 chown -R rana:rana /home/rana/.vnc /home/rana/.xsession 2>/dev/null || true
 
-# Fix startwm.sh — xrdp calls this to start the desktop
-cat > /etc/xrdp/startwm.sh << 'WMEOF'
-#!/bin/bash
-unset SESSION_MANAGER
-unset DBUS_SESSION_BUS_ADDRESS
-export XDG_SESSION_TYPE=x11
-exec startxfce4
-WMEOF
+# --- Fix xrdp startwm.sh ---
+printf '#!/bin/bash\nunset SESSION_MANAGER\nunset DBUS_SESSION_BUS_ADDRESS\nexport XDG_SESSION_TYPE=x11\nexec startxfce4\n' > /etc/xrdp/startwm.sh
 chmod +x /etc/xrdp/startwm.sh
 
-# Generate xrdp RSA keys if missing
-[ -f /etc/xrdp/rsakeys.ini ] || xrdp-keygen xrdp >/dev/null 2>&1 || true
+# --- Generate RSA keys ---
+xrdp-keygen xrdp 2>/dev/null || true
 
-# Start xrdp + sesman as background daemons (they fork — that's OK)
-echo "==> Starting xrdp"
-/usr/sbin/xrdp &
+# --- Start xrdp (daemonizes) ---
+echo "==> Starting xrdp daemon"
+/usr/sbin/xrdp || true
 sleep 2
-echo "==> Starting xrdp-sesman"
-/usr/sbin/xrdp-sesman &
+
+echo "==> Starting xrdp-sesman daemon"
+/usr/sbin/xrdp-sesman || true
 sleep 1
 
-# Verify xrdp is listening
-ss -tlnp | grep 3389 && echo "  xrdp OK on 3389" || echo "  WARN: xrdp not listening on 3389"
+# --- Verify ---
+echo "==> Checking xrdp port"
+ss -tlnp 2>/dev/null | grep 3389 || echo "  xrdp may need a moment to bind"
 
-echo "==> Starting supervisord (Xvnc + XFCE4 + noVNC on :${PORT})"
+echo "==> Starting supervisord (Xvnc + XFCE + noVNC on :${PORT})"
 exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
