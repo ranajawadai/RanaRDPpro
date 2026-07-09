@@ -49,11 +49,13 @@ the Kali toolchain. Ships a curated recon/offsec toolset and an auto-installer w
 | `OPENAI_API_KEY`    | – | Enables **ChatGPT** (gpt-4o, o3, ...) in OpenCode. |
 | `GOOGLE_API_KEY`    | – | Enables **Gemini** (gemini-2.5-pro, ...) in OpenCode. |
 | `OPENROUTER_API_KEY`| – | Enables **OpenRouter** — hundreds of models incl. **Xiaomi MiMo v2.5 Pro**, DeepSeek, Qwen, Llama, etc. |
+| `MIMO_API_KEY`     | – | Enables **Xiaomi MiMo** directly (`mimo-v2.5-pro`) via its OpenAI-compatible API. |
 
 > **Username is NOT a variable** — it is fixed to `rana` inside the image. Only set the
 > password above and whichever provider API key(s) you want. Inside OpenCode, press the
 > model picker (or `opencode models`) to switch between providers/models. To use MiMo v2.5 Pro:
-> set `OPENROUTER_API_KEY` and pick `openrouter/xiaomi/mimo-v2-5-pro`.
+> set `OPENROUTER_API_KEY` and pick `openrouter/xiaomi/mimo-v2-5-pro`, OR set `MIMO_API_KEY`
+> and pick `mimo/mimo-v2.5-pro` (direct Xiaomi API).
 
 > ⚠️ Railway free RAM is small; XFCE + a browser wants **>1 GB**. Use a paid plan or it may OOM.
 

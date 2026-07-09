@@ -39,6 +39,19 @@ auth     = "env:OPENROUTER_API_KEY"
 # To use Xiaomi MiMo v2.5 Pro:  model = "openrouter/xiaomi/mimo-v2-5-pro"
 # (exact slug may vary — run `opencode models openrouter` to see current list)
 
+# --- Xiaomi MiMo (direct, OpenAI-compatible) -----------------------------
+# MiMo API Open Platform is OpenAI-compatible. Pay-as-you-go key is `sk-...`
+# (env MIMO_API_KEY); Token Plan key is `tp-...` with base
+# https://token-plan-cn.xiaomimimo.com/v1. Model id: "mimo-v2.5-pro".
+[provider.mimo]
+type     = "openai"
+endpoint = "https://api.xiaomimimo.com/v1"
+auth     = "env:MIMO_API_KEY"
+# To use the Token Plan instead, override endpoint:
+#   endpoint = "https://token-plan-cn.xiaomimimo.com/v1"
+# (Anthropic-compatible endpoint also exists: https://api.xiaomimimo.com/anthropic)
+# model = "mimo-v2.5-pro"
+
 # --- Generic OpenAI-compatible endpoint (add any other vendor) -------------
 # Copy this block and point endpoint/auth at e.g. Groq, Together, Mistral,
 # a self-hosted vLLM, Xiaomi's own API, etc.
