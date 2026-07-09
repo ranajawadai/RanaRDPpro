@@ -66,14 +66,8 @@ RUN mkdir -p /root/.vnc /home/rana/.vnc \
 COPY xrdp.ini /etc/xrdp/xrdp.ini
 
 # Fix /etc/xrdp/startwm.sh — xrdp calls this to start the desktop session
-RUN cat > /etc/xrdp/startwm.sh << 'WMEOF'
-#!/bin/bash
-unset SESSION_MANAGER
-unset DBUS_SESSION_BUS_ADDRESS
-export XDG_SESSION_TYPE=x11
-exec startxfce4
-WMEOF
-chmod +x /etc/xrdp/startwm.sh
+RUN printf '#!/bin/bash\nunset SESSION_MANAGER\nunset DBUS_SESSION_BUS_ADDRESS\nexport XDG_SESSION_TYPE=x11\nexec startxfce4\n' > /etc/xrdp/startwm.sh \
+    && chmod +x /etc/xrdp/startwm.sh
 
 # .xsession for xrdp and create user session dir
 RUN mkdir -p /home/rana/.config/xfce4 \
