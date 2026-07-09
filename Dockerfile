@@ -62,11 +62,27 @@ RUN mkdir -p /root/.vnc /home/rana/.vnc \
     && cp /root/.vnc/xstartup /home/rana/.vnc/xstartup \
     && chown -R rana:rana /home/rana/.vnc
 
-# ---- 8. xrdp config overlay -------------------------------------------
+# ---- 8. xrdp config + session ------------------------------------------
 COPY xrdp.ini /etc/xrdp/xrdp.ini
-RUN printf 'startxfce4\n' > /etc/skel/.xsession \
-    && cp /etc/skel/.xsession /home/rana/.xsession \
+
+# Fix /etc/xrdp/startwm.sh — this is what xrdp actually calls to start the desktop
+RUN cat > /etc/xrdp/startwm.sh << 'WMEOF'
+#!/bin/bash
+unset SESSION_MANAGER
+unset DBUS_SESSION_BUS_ADDRESS
+export XDG_SESSION_TYPE=x11
+exec startxfce4
+WMEOF
+chmod +x /etc/xrdp/startwm.sh
+
+# .xsession fallback for legacy paths
+RUN printf 'startxfce4\n' > /home/rana/.xsession \
+    && chmod +x /home/rana/.xsession \
     && chown rana:rana /home/rana/.xsession
+
+# Fix container-specific PAM issue (causes 0xd06 if not done)
+RUN sed -i 's/^\(session\s*required\s*pam_loginuid.so\)/# \1/' /etc/pam.d/xrdp-sesman 2>/dev/null \
+    || true
 
 # ---- 9. OpenCode config + AGENTS.md -----------------------------------
 COPY config/opencode/config.toml /root/.config/opencode/config.toml
