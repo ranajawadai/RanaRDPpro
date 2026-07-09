@@ -13,7 +13,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
 
 # ---- 1. System + desktop + remote access --------------------------------
 # Packages: core, desktop, remote access (RDP+VNC/noVNC), dev, browser, golang
-# NOTE: nodejs/npm intentionally omitted here — NodeSource provides Node 22+npm.
+# NOTE: nodejs/npm installed separately via NodeSource in step 2.
 RUN apt-get update && apt-get install -y --no-install-recommends \
         ca-certificates curl wget gnupg git unzip xz-utils sudo nano vim \
         xfce4 xfce4-goodies dbus-x11 x11-utils x11-xserver-utils \
@@ -24,7 +24,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         golang-go \
     && rm -rf /var/lib/apt/lists/*
 
-# ---- 2. Node.js 22 LTS (NodeSource) ------------------------------------
+# ---- 2. Node.js 22 + npm (NodeSource) ---------------------------------
+# Kali repos lack npm, so we force NodeSource Node 22.
 RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
     && apt-get install -y --no-install-recommends nodejs \
     && rm -rf /var/lib/apt/lists/*
