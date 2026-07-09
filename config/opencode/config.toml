@@ -1,10 +1,51 @@
 # OpenCode configuration for RanaRDP-Pro
-# Provider auth is read from environment variables (ANTHROPIC_API_KEY, OPENAI_API_KEY, ...).
-# Run `opencode auth` inside the desktop, or export your key before launching.
+# ---------------------------------------------------------------------------
+# Multi-provider setup. NO secrets are hardcoded — each provider reads its key
+# from an environment variable. In Railway (or `docker run -e ...`) set ONLY
+# the key(s) for the provider(s) you want to use; unset providers simply won't
+# appear. Pick a model at runtime with the `models` command or `provider/model`.
+# ---------------------------------------------------------------------------
 
 [options]
-# Default model (override with `opencode models` / provider flags)
+# Default model. Change to any of the providers/models below, e.g.:
+#   "openai/gpt-4o"  ·  "google/gemini-2.5-pro"  ·  "openrouter/<model-id>"
 model = "anthropic/claude-sonnet-4"
+
+# --- Anthropic (Claude) --------------------------------------------------
+[provider.anthropic]
+type  = "anthropic"
+auth  = "env:ANTHROPIC_API_KEY"
+# models auto-discovered (claude-opus-4, claude-sonnet-4, claude-haiku-4, ...)
+
+# --- OpenAI (ChatGPT) -----------------------------------------------------
+[provider.openai]
+type  = "openai"
+auth  = "env:OPENAI_API_KEY"
+# models: gpt-4o, gpt-4o-mini, gpt-4.1, o1, o3, ...
+
+# --- Google (Gemini) ------------------------------------------------------
+[provider.google]
+type  = "google"
+auth  = "env:GOOGLE_API_KEY"
+# models: gemini-2.5-pro, gemini-2.5-flash, gemini-2.0-flash, ...
+
+# --- OpenRouter (hundreds of models, incl. Xiaomi MiMo v2.5 Pro) ----------
+# OpenRouter is OpenAI-compatible and exposes models from many vendors, e.g.:
+#   xiaomi/mimo-v2-5-pro, anthropic/*, openai/*, google/*, deepseek/*, qwen/*, meta-llama/* ...
+[provider.openrouter]
+type     = "openai"
+endpoint = "https://openrouter.ai/api/v1"
+auth     = "env:OPENROUTER_API_KEY"
+# To use Xiaomi MiMo v2.5 Pro:  model = "openrouter/xiaomi/mimo-v2-5-pro"
+# (exact slug may vary — run `opencode models openrouter` to see current list)
+
+# --- Generic OpenAI-compatible endpoint (add any other vendor) -------------
+# Copy this block and point endpoint/auth at e.g. Groq, Together, Mistral,
+# a self-hosted vLLM, Xiaomi's own API, etc.
+# [provider.custom]
+# type     = "openai"
+# endpoint = "https://your-endpoint/v1"
+# auth     = "env:YOUR_API_KEY"
 
 [permissions]
 # Allow OpenCode to run the Kali tooling it needs without per-call prompts.
