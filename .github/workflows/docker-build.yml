@@ -1,0 +1,32 @@
+name: Build Docker image
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build image (no push — validates Dockerfile)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: false
+          tags: ranardp-pro:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Smoke test (tools resolve)
+        run: |
+          docker run --rm --name smoke ranardp-pro:ci bash -lc '
+            for t in nmap sqlmap gobuster ffuf nuclei subfinder httpx amass nikto opencode; do
+              command -v "$t" >/dev/null && echo "OK  $t" || echo "MISSING $t"
+            done'

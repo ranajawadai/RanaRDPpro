@@ -1,0 +1,7 @@
+# Build context hygiene — keep the image small and the build fast
+.git
+.github
+node_modules
+*.md
+!README.md
+.ai

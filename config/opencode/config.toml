@@ -1,0 +1,32 @@
+# OpenCode configuration for RanaRDP-Pro
+# Provider auth is read from environment variables (ANTHROPIC_API_KEY, OPENAI_API_KEY, ...).
+# Run `opencode auth` inside the desktop, or export your key before launching.
+
+[options]
+# Default model (override with `opencode models` / provider flags)
+model = "anthropic/claude-sonnet-4"
+
+[permissions]
+# Allow OpenCode to run the Kali tooling it needs without per-call prompts.
+allow = [
+  "Bash(nmap:*)",
+  "Bash(sqlmap:*)",
+  "Bash(gobuster:*)",
+  "Bash(ffuf:*)",
+  "Bash(nuclei:*)",
+  "Bash(subfinder:*)",
+  "Bash(httpx:*)",
+  "Bash(amass:*)",
+  "Bash(nikto:*)",
+  "Bash(masscan:*)",
+  "Bash(whatweb:*)",
+  "Bash(dig:*)",
+  "Bash(curl:*)",
+  "Bash(python3:*)",
+  "Bash(node:*)",
+  "Bash(bash:*)",
+  "Bash(/opt/scripts/install_bosk_tools.sh:*)",
+  "Read(~/**)",
+  "Write(~/**)",
+  "Edit(~/**)"
+]
