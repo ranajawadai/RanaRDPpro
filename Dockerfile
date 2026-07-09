@@ -24,11 +24,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         golang-go \
     && rm -rf /var/lib/apt/lists/*
 
-# ---- 2. Node.js 22 + npm (NodeSource) ---------------------------------
-# Kali repos lack npm, so we force NodeSource Node 22.
-RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
-    && apt-get install -y --no-install-recommends nodejs \
-    && rm -rf /var/lib/apt/lists/*
+# ---- 2. Node.js 22 + npm (direct binary, bypasses apt entirely) --------
+# Kali repos have nodejs but no npm. Binary tarball guarantees both.
+ARG NODE_VERSION=22.16.0
+RUN ARCH="$(dpkg --print-architecture)" \
+    && if [ "$ARCH" = "amd64" ]; then NODE_ARCH=x64; \
+       elif [ "$ARCH" = "arm64" ]; then NODE_ARCH=arm64; \
+       else NODE_ARCH="$ARCH"; fi \
+    && curl -fsSL "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-${NODE_ARCH}.tar.xz" \
+       | tar -xJ -C /usr/local --strip-components=1 \
+    && node -v && npm -v
 
 # ---- 3. Curated offsec / recon toolset --------------------------------
 # Runs the external installer script so tool lists stay in one place.
